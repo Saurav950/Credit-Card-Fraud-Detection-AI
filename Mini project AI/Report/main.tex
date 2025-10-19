@@ -1,0 +1,185 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- Packages ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{float}        % for [H] exact figure/table placement
+\usepackage{booktabs}     % nice tables
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}     % code listings
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+% ---------- Code style ----------
+\lstdefinestyle{mystyle}{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray!70},
+  stringstyle=\color{orange!70!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=8pt,
+  frame=single,
+  breaklines=true,
+  tabsize=2,
+  showstringspaces=false
+}
+\lstset{style=mystyle, language=Python}
+
+% ---------- Title ----------
+\title{\textbf{Credit Card Fraud Detection}\\
+\large Model Comparison using Logistic Regression, Decision Tree, and MLP (ANN)}
+\author{Saurav Banerjee (Roll No: 16014123042) \\
+Urvi Bhat (Roll No: 16014123059) \\
+K. J. Somaiya College of Engineering}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This mini-project builds and compares three models---Logistic Regression, Decision Tree, and a Multi-Layer Perceptron (ANN)---for credit card fraud detection. Using a Kaggle dataset, we implement preprocessing, train--test split, SMOTE for handling imbalance, training, and evaluation using Precision, Recall, F1-score, and ROC-AUC. Results show that the ANN attains the best overall performance.
+\end{abstract}
+
+\section{Problem Statement}
+Credit card fraud is a major challenge for financial institutions. The goal is to classify transactions as \emph{fraudulent} or \emph{legitimate} using machine learning. We evaluate three models aligned with the syllabus:
+\begin{itemize}
+    \item Logistic Regression (baseline linear classifier),
+    \item Decision Tree (interpretable, non-linear),
+    \item Multi-Layer Perceptron (ANN).
+\end{itemize}
+
+\section{Dataset}
+We use the ``Credit Card Fraud Detection Dataset 2023'' from Kaggle~\cite{dataset}.  
+Features: anonymized variables $V1$--$V28$, transaction \texttt{Amount}, and target label \texttt{Class} (fraud=1, non-fraud=0).  
+The \texttt{id} column was dropped since it is not predictive.
+
+\section{Methodology}
+The pipeline (Figure~\ref{fig:block}) includes:
+\begin{enumerate}
+    \item Preprocessing: scaling numerical features.
+    \item Train/test split (80/20 stratified).
+    \item SMOTE oversampling on training data to handle class imbalance.
+    \item Model training: Logistic Regression, Decision Tree, ANN.
+    \item Evaluation: Precision, Recall, F1-score, ROC-AUC.
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{Credit Card Fraud Detection.drawio.png}
+    \caption{Workflow for Credit Card Fraud Detection.}
+    \label{fig:block}
+\end{figure}
+
+\section{Code Snippet}
+\begin{lstlisting}
+logreg = ImbPipeline([
+  ('pre', preprocess),
+  ('smote', SMOTE(random_state=42)),
+  ('clf', LogisticRegression(class_weight='balanced',
+                             solver='liblinear',
+                             max_iter=1000))
+])
+
+tree = ImbPipeline([
+  ('pre', preprocess),
+  ('smote', SMOTE(random_state=42)),
+  ('clf', DecisionTreeClassifier(class_weight='balanced',
+                                 random_state=42))
+])
+
+mlp = ImbPipeline([
+  ('pre', preprocess),
+  ('smote', SMOTE(random_state=42)),
+  ('clf', MLPClassifier(hidden_layer_sizes=(64,32),
+                        activation='relu',
+                        early_stopping=True,
+                        max_iter=120))
+])
+\end{lstlisting}
+
+\section{Results}
+Table~\ref{tab:metrics} shows the evaluation metrics of all three models on the test set.  
+The ANN clearly achieves the highest values in Precision, Recall, F1-score, and ROC-AUC, 
+indicating its superior performance. Logistic Regression performs slightly lower, while 
+Decision Tree is very strong and close to ANN.
+
+\begin{table}[H]
+\centering
+\caption{Model comparison on test set.}
+\label{tab:metrics}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} \\
+\midrule
+Logistic Regression & 0.9773 & 0.9522 & 0.9646 & 0.9935 \\
+Decision Tree       & 0.9968 & 0.9987 & 0.9978 & 0.9978 \\
+MLP (ANN)           & \textbf{0.9991} & \textbf{1.0000} & \textbf{0.9996} & \textbf{0.99996} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent
+From Table~\ref{tab:metrics}, we see that the ANN achieves almost perfect scores 
+with Recall = 1.0, meaning no fraudulent transaction was missed. Decision Tree also 
+performs very well but is slightly less accurate than ANN. Logistic Regression, being 
+linear, is less powerful but still a good baseline.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{roc_curves.png}
+    \caption{ROC curves for the three models.}
+    \label{fig:roc}
+\end{figure}
+
+\noindent
+Figure~\ref{fig:roc} shows the ROC curves. The curve for ANN is almost touching 
+the top-left corner, which indicates near-perfect classification ability. Decision Tree 
+is also close, while Logistic Regression is slightly below but still strong.  
+A higher ROC curve means better ability to distinguish fraud vs non-fraud.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{confusion_matrix.png}
+    \caption{Confusion matrix for best model (ANN).}
+    \label{fig:cm}
+\end{figure}
+
+\noindent
+Figure~\ref{fig:cm} presents the confusion matrix for ANN. It shows that almost 
+all legitimate and fraudulent transactions were classified correctly. Only a very 
+small number of false positives occurred (legitimate marked as fraud), while 
+false negatives (fraud missed) are zero. This is desirable in fraud detection 
+since missing frauds is more dangerous than raising a few false alarms.
+
+\section{Future Scope}
+This project can be extended in several directions:
+\begin{itemize}
+    \item Deploy the trained model as a REST API for real-time fraud detection in banking apps.
+    \item Experiment with advanced models like Random Forests, Gradient Boosted Trees, or Transformer-based models.
+    \item Perform cost-sensitive learning, where missing a fraud is penalized more than a false alarm.
+    \item Explore feature importance to gain insights into which transaction attributes contribute most to fraud detection.
+\end{itemize}
+
+\section{Conclusion}
+The MLP (ANN) outperformed Logistic Regression and Decision Tree, achieving nearly perfect recall and ROC-AUC. Decision Tree offers interpretability, while Logistic Regression provides a strong linear baseline. The project demonstrates that deep learning yields the highest fraud detection performance for this dataset.
+\newpage
+\begin{thebibliography}{9}
+\bibitem{dataset}
+Gayan Nuwani Nelgiriyewithana, ``Credit Card Fraud Detection Dataset 2023,'' Kaggle, 2023. Available: \url{https://www.kaggle.com/datasets/nelgiriyewithana/credit-card-fraud-detection-dataset-2023}
+
+\bibitem{sklearn}
+Pedregosa, F. et al., ``Scikit-learn: Machine Learning in Python,'' JMLR, vol. 12, pp. 2825–2830, 2011.
+
+\bibitem{imblearn}
+Lemaître, G., Nogueira, F., and Aridas, C.K., ``Imbalanced-learn: A Python Toolbox to Tackle the Curse of Imbalanced Datasets,'' JMLR, vol. 18, no. 17, pp. 1–5, 2017.
+\end{thebibliography}
+
+\end{document}
