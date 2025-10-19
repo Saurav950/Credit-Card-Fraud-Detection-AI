@@ -1,21 +1,72 @@
-MIT License
+# Credit Card Fraud Detection - AI Mini Project
 
-Copyright (c) 2025 Saurav Banerjee
+### Team Members
+- **Saurav Banerjee** (Roll No: 16014123042)  
+- **Urvi Bhat** (Roll No: 16014123059)  
+*K. J. Somaiya College of Engineering*
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+---
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+## 📌 Problem Statement
+Credit card fraud is a major challenge for financial institutions.  
+Our goal is to classify transactions as **fraudulent (1)** or **legitimate (0)** using machine learning and deep learning models.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+---
+
+## 📊 Dataset
+We used the [Credit Card Fraud Detection Dataset 2023](https://www.kaggle.com/datasets/nelgiriyewithana/credit-card-fraud-detection-dataset-2023).  
+Features include anonymized variables V1–V28, transaction `Amount`, and target label `Class`.
+
+---
+
+## ⚙️ Methodology
+1. Preprocessing (scaling + dropping ID column)  
+2. Train/test split (80/20 stratified)  
+3. Handling class imbalance with **SMOTE**  
+4. Model Training:
+   - Logistic Regression  
+   - Decision Tree  
+   - Multi-Layer Perceptron (ANN)  
+5. Evaluation metrics: **Precision, Recall, F1, ROC-AUC**
+
+---
+
+## 📈 Results
+- **Best Model**: ANN (MLP)  
+- **Metrics:**
+
+| Model | Precision | Recall | F1 | ROC-AUC |
+|-------|-----------|--------|----|---------|
+| Logistic Regression | 0.9773 | 0.9522 | 0.9646 | 0.9935 |
+| Decision Tree | 0.9968 | 0.9987 | 0.9978 | 0.9978 |
+| ANN (MLP) | **0.9991** | **1.0000** | **0.9996** | **0.99996** |
+
+- **ROC Curve:**  
+  ![ROC Curve](roc_curves.png)
+
+- **Confusion Matrix (ANN):**  
+  ![Confusion Matrix](confusion_matrix.png)
+
+---
+
+## 📂 Project Files
+- `main.py` → Python code  
+- `requirements.txt` → Dependencies  
+- `main.tex` → LaTeX source for report  
+- `report.pdf` → Final report  
+- Images → Block diagram + plots  
+- Dataset → [Kaggle link](https://www.kaggle.com/datasets/nelgiriyewithana/credit-card-fraud-detection-dataset-2023)
+
+---
+
+## 🔮 Future Scope
+- Deploy model as an API for real-time fraud detection  
+- Try ensemble models like Random Forest, Gradient Boosting  
+- Explore cost-sensitive learning (false negatives penalized more)  
+
+---
+
+## 📝 References
+1. Kaggle Dataset: [Credit Card Fraud Detection 2023](https://www.kaggle.com/datasets/nelgiriyewithana/credit-card-fraud-detection-dataset-2023)  
+2. Pedregosa, F. et al., *Scikit-learn: Machine Learning in Python*, JMLR, 2011.  
+3. Lemaître, G. et al., *Imbalanced-learn: A Python Toolbox to Tackle Imbalanced Datasets*, JMLR, 2017.
